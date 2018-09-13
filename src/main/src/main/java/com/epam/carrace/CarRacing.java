@@ -8,6 +8,7 @@ public class CarRacing {
 
 
     public static void main(String[] args) {
+//        test
         final int numberOfCars = 10;
         final int timeOfRaceSeconds = 20;
 
