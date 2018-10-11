@@ -8,7 +8,6 @@ public class CarRacing {
 
 
     public static void main(String[] args) {
-//        test
         final int numberOfCars = 10;
         final int timeOfRaceSeconds = 20;
 
@@ -33,28 +32,38 @@ public class CarRacing {
 
         List<Car> finalResult = (List<Car>) completableFuture.join();
         finalResult.forEach(t->t.setAverageSpeed());
-        finalResult.forEach(t -> System.out.println("Finished Car " + t.getCarNumber() + " with avarge speed " + t.getAvarageSpeed()));
+        finalResult.forEach(t -> System.out.println("Finished Car " + t.getCarNumber() + " with average speed " + t.getAvarageSpeed()));
+        finalResult = getPositionsPerEachSecond(finalResult, timeOfRaceSeconds);
+        finalResult = sortCarsBySpeed(finalResult);
+        printFirstPlaces(3, finalResult);
+
+    }
+
+    private static List<Car> getPositionsPerEachSecond (List<Car> listWithCars, int timeOfRace){
         Map<Integer, Integer> timePerSecond = new HashMap<>();
         Map<Integer, Integer> overallTime = new HashMap<>();
         Map<Integer, Integer> sortedOverallTime;
-        for (int i = 0; i < timeOfRaceSeconds; i++) {
+        for (int i = 0; i < timeOfRace; i++) {
             int numberOfSecond = i;
-            finalResult.forEach(t -> timePerSecond.put(t.getCarNumber(), Integer.valueOf((Integer) t.getSpeedPerSecond().get(numberOfSecond))));
+            listWithCars.forEach(t -> timePerSecond.put(t.getCarNumber(), Integer.valueOf((Integer) t.getSpeedPerSecond().get(numberOfSecond))));
             timePerSecond.forEach((k,v)->overallTime.merge(k,v, Integer::sum));
             sortedOverallTime = mapSoring(overallTime);
-            List<Integer> testList;
-            testList = new ArrayList<>(sortedOverallTime.keySet());
+            List<Integer> testList= new ArrayList<>(sortedOverallTime.keySet());
             Collections.reverse(testList);
-            finalResult.forEach(t -> t.addPositionPerSeconds(1+testList.indexOf(t.getCarNumber())));
+            listWithCars.forEach(t -> t.addPositionPerSeconds(1+testList.indexOf(t.getCarNumber())));
+        }return listWithCars;
+    }
+
+    private static List<Car> sortCarsBySpeed (List<Car> listToSort) {
+        listToSort.sort(Comparator.comparing(Car::getAvarageSpeed).reversed());
+        return listToSort;
+    }
+
+    private static void printFirstPlaces (int numberOfPlaces, List<Car> testList) {
+        for (int i = 0; i<numberOfPlaces; i++) {
+            int place = i+1;
+            System.out.println("car on the " + place + " place with number " + testList.get(i).getCarNumber() + " with positions per seconds " + testList.get(i).getPositionPerSeconds() + " and speeds per seconds " + testList.get(i).getSpeedPerSecond());
         }
-            finalResult.sort(Comparator.comparing(Car::getAvarageSpeed));
-            int temp = 3;
-            for (int i=numberOfCars-3;i<numberOfCars;i++){
-                System.out.println("car on the " + temp + " place with number " + finalResult.get(i).getCarNumber() + " with positions per seconds " + finalResult.get(i).getPositionPerSeconds() + " and speeds per seconds " + finalResult.get(i).getSpeedPerSecond());
-                temp-=1;
-            }
-
-
     }
 
     private static HashMap<Integer, Integer> mapSoring (Map<Integer, Integer> testMap){
@@ -67,19 +76,17 @@ public class CarRacing {
 
 
     private static CompletableFuture<Car> createRace(final int carNumber){
-        return CompletableFuture.supplyAsync(() -> {
-
+        CompletableFuture<Car> completableFuture = CompletableFuture.supplyAsync(() -> {
             Random rand = new Random();
-
             Car car = new Car();
             car.setCarNumber(carNumber);
             for(int i=0; i<20; i++) {
                 car.addSpeedPerSecond(rand.nextInt(200) + 1);
                 simulateDelay();
             }
-
             return car;
         }, Executors.newFixedThreadPool(1));
+        return completableFuture;
     }
 
     private static void simulateDelay() {
