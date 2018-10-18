@@ -18,43 +18,42 @@ public class CalcImplementation {
     int countOfaction;
     String currentDate;
 
-    public void calcLogic () {
+    public void calcActions () {
         switch (action){
-            case '+': ActionFactory action = new ActionFactory(new Addition());
-                        result = action.execute(firstNumber, secondNumber);break;
-            case '-': ActionFactory action = new ActionFactory(new Subtraction());
-                        result = action.execute(firstNumber, secondNumber);break;
-
-//
-//            case '-': result = subtraction(firstNumber,secondNumber);break;
-//            case '*': result = multiplication(firstNumber,secondNumber);break;
-//            case '/': result = division(firstNumber,secondNumber);break;
+            case '+': ActionFactory addition = new ActionFactory(new Addition());
+                        result = addition.execute(firstNumber, secondNumber);break;
+            case '-': ActionFactory subtraction = new ActionFactory(new Subtraction());
+                        result = subtraction.execute(firstNumber, secondNumber);break;
+            case '/': ActionFactory division = new ActionFactory(new Division());
+                        result = division.execute(firstNumber, secondNumber);break;
+            case '*':ActionFactory multiplication = new ActionFactory(new Multiplication());
+                        result = multiplication.execute(firstNumber, secondNumber);
         }
     }
 
-    public void startProgram () throws IOException {
+    public void runCalculator () throws IOException {
         do
         {
             if (countOfaction == 0) {
-                recieveFirstNumber();
+               firstNumber = getNumberFromClient("first");
             } else {
                 firstNumber = result;
             }
-            recieveAction();
-            recieveSecondNumber();
-            calcLogic();
-            nextRun();
-            writeResult2();
+            getActionfromClient();
+            secondNumber = getNumberFromClient("second");
+            calcActions();
+            nextAction();
+            writeResult();
         } while (runAgain);
     }
 
-    public void nextRun () {
+    public void nextAction () {
         System.out.println("the result is " + result);
         countOfaction++;
-        askForRun();
+        askForNextAction();
     }
 
-    public void askForRun () {
+    public void askForNextAction () {
         Scanner sc = new Scanner(System.in);
         System.out.println("next Action? Y/N");
         char answer = sc.next().charAt(0);
@@ -64,43 +63,37 @@ public class CalcImplementation {
         }
     }
 
-    public void recieveFirstNumber () {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Enter first number");
-        double temp = sc.nextDouble();
-        if (temp > -20.0&&temp < 20) {
-            firstNumber = temp;
-        }else {
-            System.out.println("incorrect type");
-            recieveFirstNumber();
-        }
+    public double getNumberFromClient (String countOfnumber){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter " + countOfnumber + " number");
+        double tempNumber;
+        do {
+            while (!scanner.hasNextDouble()) {
+                scanner.next();
+                System.out.println("not a double, try again");
+            }
+            tempNumber = scanner.nextDouble();
+            if (tempNumber < -20.0 || tempNumber > 20) {
+                System.out.println("number is out of range, try again");
+            }
+        } while (tempNumber < -20.0 || tempNumber > 20);
+        return tempNumber;
     }
 
-    public void recieveSecondNumber () {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Enter second number");
-        double temp = sc.nextDouble();
-        if (temp > -20.0&&temp < 20) {
-            secondNumber = temp;
-        }else {
-            System.out.println("incorrect type");
-            recieveSecondNumber();
-        }
-    }
-
-    public void recieveAction () {
-        Scanner sc = new Scanner(System.in);
+    public void getActionfromClient () {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter action");
-        char temp = sc.next().charAt(0);
-        if (temp == '*'||temp == '/'||temp == '+'||temp == '-'){
-            action = temp;
-        }else{
-            System.out.println("ono");
-            recieveAction();
+        do {
+            action = scanner.next().charAt(0);
+            if (action != '*' && action != '/' && action != '+' && action != '-') {
+                System.out.println("number is out of range, try again");
+            }
         }
-    }
+        while (action != '*'&&action != '/' && action != '+'&& action != '-');
+        }
 
-    public void writeResult2 () throws IOException {
+
+    public void writeResult () throws IOException {
         currentDate = extractCurrentDate();
         Writer output = new BufferedWriter(new FileWriter("c:/Nasdaq/temp/temp.txt", true));
         output.write(result + " was calculated on " + currentDate);
