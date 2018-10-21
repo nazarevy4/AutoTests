@@ -13,24 +13,22 @@ public class CarRacing {
 
         List<CompletableFuture<Car>> tasks = new ArrayList<CompletableFuture<Car>>();
 
-        for (int i = 1; i <=numberOfCars; i++) {
+        for (int i = 1; i <=numberOfCars; i++) {  // create 20 complet f empty. no work
             tasks.add(createRace(i));
         }
 
         CompletableFuture<Void> done = CompletableFuture
-                .allOf(tasks.toArray(new CompletableFuture[tasks.size()]));
+                .allOf(tasks.toArray(new CompletableFuture[tasks.size()]));    //contains result of futures
 
-        CompletableFuture<List<Car>> allCompletableFuture = done.thenApply(future -> {
-            return tasks.stream()
-                    .map(task -> task.join())
+        CompletableFuture<List<Car>> allCompletableFuture = done.thenApply(future -> {    //
+            return tasks.stream()                                      // run stream on tasks
+                    .map(task -> task.join())                    //join invoke method run
                     .collect(Collectors.toList());
         });
 
-        CompletableFuture completableFuture = allCompletableFuture.thenApply(t -> {
-            return t.stream().collect(Collectors.toList());
-        });
+        List<Car> finalResult = (List<Car>) allCompletableFuture;    // triggers all above
 
-        List<Car> finalResult = (List<Car>) completableFuture.join();
+
         finalResult.forEach(t->t.setAverageSpeed());
         finalResult.forEach(t -> System.out.println("Finished Car " + t.getCarNumber() + " with average speed " + t.getAvarageSpeed()));
         finalResult = getPositionsPerEachSecond(finalResult, timeOfRaceSeconds);
