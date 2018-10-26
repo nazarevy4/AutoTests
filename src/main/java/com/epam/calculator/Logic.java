@@ -124,7 +124,6 @@ public class Logic {
         Writer output = new BufferedWriter(new FileWriter("c:/Nasdaq/temp/temp.txt", true));
         output.write(result + " was calculated on " + currentDate);
         output.close();
-
     }
 
     public String extractCurrentDate () {

@@ -18,19 +18,6 @@ public class CalcImplementation {
     int countOfaction;
     String currentDate;
 
-    public void calcActions () {
-        switch (action){
-            case '+': ActionFactory addition = new ActionFactory(new Addition());
-                        result = addition.execute(firstNumber, secondNumber);break;
-            case '-': ActionFactory subtraction = new ActionFactory(new Subtraction());
-                        result = subtraction.execute(firstNumber, secondNumber);break;
-            case '/': ActionFactory division = new ActionFactory(new Division());
-                        result = division.execute(firstNumber, secondNumber);break;
-            case '*':ActionFactory multiplication = new ActionFactory(new Multiplication());
-                        result = multiplication.execute(firstNumber, secondNumber);
-        }
-    }
-
     public void runCalculator () throws IOException {
         do
         {
@@ -41,7 +28,12 @@ public class CalcImplementation {
             }
             getActionfromClient();
             secondNumber = getNumberFromClient("second");
-            calcActions();
+
+            CalcAction object = ActionFactory.createAction(action);
+            result = object.performOperation(firstNumber, secondNumber);
+
+
+
             nextAction();
             writeResult();
         } while (runAgain);
@@ -83,19 +75,20 @@ public class CalcImplementation {
     public void getActionfromClient () {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter action");
-        do {
-            action = scanner.next().charAt(0);
-            if (action != '*' && action != '/' && action != '+' && action != '-') {
-                System.out.println("number is out of range, try again");
-            }
-        }
-        while (action != '*'&&action != '/' && action != '+'&& action != '-');
-        }
+//        do {
+//            action = scanner.next().charAt(0);
+//            if (action != '*' && action != '/' && action != '+' && action != '-') {
+//                System.out.println("number is out of range, try again");
+//            }
+//        }
+//        while (action != '*'&&action != '/' && action != '+'&& action != '-');
+        action = scanner.next().charAt(0);
+    }
 
 
     public void writeResult () throws IOException {
         currentDate = extractCurrentDate();
-        Writer output = new BufferedWriter(new FileWriter("c:/Nasdaq/temp/temp.txt", true));
+        Writer output = new BufferedWriter(new FileWriter("c:/Nasdaq/tem/temp.txt", true));
         output.write(result + " was calculated on " + currentDate);
         output.close();
     }

@@ -1,13 +1,16 @@
 package com.epam.calcnew;
 
 public class ActionFactory {
-    private CalcAction calcAction;
 
-    public ActionFactory (CalcAction strategy){
-        this.calcAction = strategy;
-    }
-
-    public double execute (double num1, double num2){
-        return calcAction.performOperation(num1, num2);
+    public static CalcAction createAction(char action)
+    {
+        CalcAction calcAction;
+        switch (action) {
+            case '+': calcAction = new Addition();break;
+            case '-': calcAction = new Subtraction();break;
+            case '/': calcAction = new Division();break;
+            case '*': calcAction = new Multiplication();break;
+            default: throw new UnsupportedOperationException();
+        }return calcAction;
     }
 }
