@@ -31,9 +31,6 @@ public class CalcImplementation {
 
             CalcAction object = ActionFactory.createAction(action);
             result = object.performOperation(firstNumber, secondNumber);
-
-
-
             nextAction();
             writeResult();
         } while (runAgain);
@@ -75,13 +72,6 @@ public class CalcImplementation {
     public void getActionfromClient () {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter action");
-//        do {
-//            action = scanner.next().charAt(0);
-//            if (action != '*' && action != '/' && action != '+' && action != '-') {
-//                System.out.println("number is out of range, try again");
-//            }
-//        }
-//        while (action != '*'&&action != '/' && action != '+'&& action != '-');
         action = scanner.next().charAt(0);
     }
 
