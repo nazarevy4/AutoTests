@@ -78,7 +78,8 @@ public class CalcImplementation {
 
     public void writeResult () throws IOException {
         currentDate = extractCurrentDate();
-        Writer output = new BufferedWriter(new FileWriter("c:/Nasdaq/tem/temp.txt", true));
+//        Writer output = new BufferedWriter(new FileWriter("c:/Nasdaq/tem/temp.txt", true));
+        Writer output = new BufferedWriter(new FileWriter("./src/main/resources/textFile/results.txt", true));
         output.write(" result of calculation is " + result + " was calculated on " + currentDate);
         output.close();
     }
