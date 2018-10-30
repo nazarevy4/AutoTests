@@ -13,28 +13,16 @@ public class CarRacing {
 
         List<CompletableFuture<Car>> tasks = new ArrayList<>();
 
-        for (int i = 1; i <=numberOfCars; i++) {  // create 20 complet f empty. no work
+        for (int i = 1; i <=numberOfCars; i++) {
             tasks.add(createRace(i));
         }
 
         CompletableFuture<Void> done = CompletableFuture
-                .allOf(tasks.toArray(new CompletableFuture[tasks.size()]));    //contains result of futures . allOf - wait for all asynchronous tasks to complete
+                .allOf(tasks.toArray(new CompletableFuture[tasks.size()]));
 
-        CompletableFuture<List<Car>> allCompletableFuture = done.thenApply(future -> {    //       then apply when there is some result
-            return tasks.stream()                                      // run stream on tasks
-                    .map(task -> task.join())                    //join invoke method run
-                    .collect(Collectors.toList());
-        });
-
-
-
-
-
-//        CompletableFuture completableFuture = allCompletableFuture.thenApply(t -> {
-//            return t.stream().collect(Collectors.toList());
-//        });
-
-    // triggers all above
+        CompletableFuture<List<Car>> allCompletableFuture = done.thenApply(future -> tasks.stream()
+                .map(task -> task.join())
+                .collect(Collectors.toList()));
         List<Car> finalResult = allCompletableFuture.join();
 
         finalResult.forEach(t->t.setAverageSpeed());
@@ -98,7 +86,7 @@ public class CarRacing {
 
     private static void simulateDelay() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
